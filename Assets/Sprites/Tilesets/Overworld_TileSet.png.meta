@@ -1374,27 +1374,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Overworld_TileSet_47
-      rect:
-        serializedVersion: 2
-        x: 187
-        y: 34
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 07d51ceaeab5b3b50800000000000000
-      internalID: 6573948886891715952
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Overworld_TileSet_48
       rect:
         serializedVersion: 2
@@ -1599,27 +1578,6 @@ TextureImporter:
       bones: []
       spriteID: 2306f35d396a479c0800000000000000
       internalID: -3930333420919496654
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Overworld_TileSet_57
-      rect:
-        serializedVersion: 2
-        x: 187
-        y: 17
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 271f4676f4c856d90800000000000000
-      internalID: -7105118564442115726
       vertices: []
       indices: 
       edges: []
