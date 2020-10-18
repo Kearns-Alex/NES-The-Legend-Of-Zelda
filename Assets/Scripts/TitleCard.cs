@@ -36,8 +36,14 @@ public class TitleCard : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D other)
     {
+        // check to see that the player tag is attached to the one colliding
+        if (!other.CompareTag("Player"))
+        {
+            return;
+        }
+
         StartCoroutine(PlaceNameCo());
     }
 
