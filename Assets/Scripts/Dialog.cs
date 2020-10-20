@@ -48,6 +48,7 @@ public class Dialog : MonoBehaviour
             dialogBox.SetActive(true);
             dialogText.text = dialog;
         }
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)

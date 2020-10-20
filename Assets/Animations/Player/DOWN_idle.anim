@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WalkDown
+  m_Name: DOWN_idle
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -30,7 +30,7 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.21666667
+        time: 0.016666668
         value: 0
         inSlope: Infinity
         outSlope: Infinity
@@ -49,12 +49,6 @@ AnimationClip:
   - curve:
     - time: 0
       value: {fileID: 4078214367651993691, guid: 8ac80029e0233cd4fafec78350a27ad0,
-        type: 3}
-    - time: 0.1
-      value: {fileID: -14304604631657636, guid: 8ac80029e0233cd4fafec78350a27ad0,
-        type: 3}
-    - time: 0.2
-      value: {fileID: -14304604631657636, guid: 8ac80029e0233cd4fafec78350a27ad0,
         type: 3}
     attribute: m_Sprite
     path: 
@@ -83,14 +77,12 @@ AnimationClip:
       isPPtrCurve: 1
     pptrCurveMapping:
     - {fileID: 4078214367651993691, guid: 8ac80029e0233cd4fafec78350a27ad0, type: 3}
-    - {fileID: -14304604631657636, guid: 8ac80029e0233cd4fafec78350a27ad0, type: 3}
-    - {fileID: -14304604631657636, guid: 8ac80029e0233cd4fafec78350a27ad0, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.21666667
+    m_StopTime: 0.016666668
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -119,7 +111,7 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.21666667
+        time: 0.016666668
         value: 0
         inSlope: Infinity
         outSlope: Infinity
