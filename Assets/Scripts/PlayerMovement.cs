@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ActionCode.ColorPalettes;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,9 +9,9 @@ public class PlayerMovement : MonoBehaviour
     private sbyte walkSpeed = 4;
 
     private Animator animator;
+    private ColorPaletteSwapperCycle swapper;
 
     // movement variables
-    private Vector3 change;
     private float xAxis;
     private float yAxis;
     private Rigidbody2D rb2d;
@@ -19,8 +20,6 @@ public class PlayerMovement : MonoBehaviour
     private bool isAttackPressed;
     private bool isAttacking;
     private string currentAnimaton;
-    [SerializeField]
-    private float attackDelay;
 
     // animation states
     const string PLAYER_X_IDLE = "Player_X_idle";
@@ -44,6 +43,10 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        swapper = GetComponent<ColorPaletteSwapperCycle>();
+        
+        // AJK: Maybe check here to see if we have the ring(s) attached to do the palette swap
+        // Red ring trumps blue, blue = 1/2 red = 1/4
     }
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -55,17 +58,19 @@ public class PlayerMovement : MonoBehaviour
         xAxis = Input.GetAxisRaw("Horizontal");
         yAxis = Input.GetAxisRaw("Vertical");
 
+        // [2] 'A' key pressed
+        if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
+            isAttackPressed = true;
+        }
+        else
         // [1] 'B' key pressed
         if (Input.GetKeyDown(KeyCode.Keypad1))
         {
             isItemPressed = true;
         }
 
-        // [2] 'A' key pressed
-        if (Input.GetKeyDown(KeyCode.Keypad2))
-        {
-            isAttackPressed = true;
-        }
+        if (Input.GetKeyDown(KeyCode.C)) swapper.SwapPalette();
     }
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -73,9 +78,84 @@ public class PlayerMovement : MonoBehaviour
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     void FixedUpdate()
     {
-        // check first for a double key press (diagonals)
-        bool isMovingHorizontal = Mathf.Abs(xAxis) > 0;
-        bool isMovingVertical = Mathf.Abs(yAxis) > 0;
+        // check for two keys being pressed at once
+        CheckDiagonal();
+
+        // check our X movement
+        CheckXMovement();
+
+        // check our Y movement
+        CheckYMovement();
+
+        // check for attack
+        CheckAttackPress();
+
+        // check for item use
+        CheckItemPress();
+
+
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        // By now, our xAxis and yAxis should be finilized 
+        // and able to move into any final animations/player movement.
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+        // change animation
+        UpdateAnimations();
+
+        // finally move our character
+        MoveCharacter(new Vector2(xAxis, yAxis));
+    }
+
+    void UpdateAnimations()
+    {
+        if (xAxis != 0)
+        {
+            ChangeAnimationState(PLAYER_X_MOVE);
+            wasMovingUP = false;
+            wasMovingDOWN = false;
+        }
+        else if (yAxis != 0)
+        {
+            if (yAxis < 0)
+            {
+                ChangeAnimationState(PLAYER_DOWN_MOVE);
+            }
+            else
+            {
+                ChangeAnimationState(PLAYER_UP_MOVE);
+            }
+        }
+        else if (wasMovingUP == true)
+        {
+            ChangeAnimationState(PLAYER_UP_IDLE);
+        }
+        else if (wasMovingDOWN == true)
+        {
+            ChangeAnimationState(PLAYER_DOWN_IDLE);
+        }
+        else if (!isAttacking)
+        {
+            ChangeAnimationState(PLAYER_X_IDLE);
+        }
+    }
+
+    // Allows other "outside sources" to move the character if needed.
+    void MoveCharacter(Vector2 velocity)
+    {
+        // this line of code was making weird things happen such as the demo in unity being choppy and slow 
+        //  compared to the build application being smooth and quicker. The following line seems to have
+        //  fixed these issues...but the second line will cause jittering
+        // SOLVED: replace 'Update()' with 'FixedUpdate()' and this line of code works perfectly
+        rb2d.velocity = velocity;
+        //transform.position = transform.position + delta * speed * Time.deltaTime;
+    }
+
+    void CheckDiagonal()
+    {
+        // check to see what keys are currently pressed
+        bool isMovingHorizontal = (Mathf.Abs(xAxis) > 0);
+        bool isMovingVertical = (Mathf.Abs(yAxis) > 0);
 
         // check for diagonal movement
         if (isMovingVertical && isMovingHorizontal)
@@ -100,58 +180,61 @@ public class PlayerMovement : MonoBehaviour
             wasMovingVertical = true;
             xAxis = 0;
         }
+    }
 
-        // by now, our xAxis and yAxis have been finilized in regards to movement input
-        Vector2 vel = new Vector2(0, 0);
-
-        // check our X movement
-        if (xAxis < 0 && !isAttacking)
+    void CheckXMovement()
+    {
+        if (xAxis < 0 && !isAttacking && !isUsingItem)
         {
             // flip the animation for the direction we are headed
             transform.localScale = new Vector2(-1, 1);
-            vel.x = -walkSpeed;
+            xAxis = -walkSpeed;
         }
-        else if (0 < xAxis && !isAttacking)
+        else if (0 < xAxis && !isAttacking && !isUsingItem)
         {
             // flip the animation for the direction we are headed
             transform.localScale = new Vector2(1, 1);
-            vel.x = walkSpeed;
+            xAxis = walkSpeed;
         }
         else
         {
-            vel.x = 0;
+            xAxis = 0;
         }
+    }
 
-        // check our Y movement
-        if (yAxis < 0 && !isAttacking)
+    void CheckYMovement()
+    {
+        if (yAxis < 0 && !isAttacking && !isUsingItem)
         {
             // flip the animation for the direction we are headed
             transform.localScale = new Vector2(1, 1);
-            vel.y = -walkSpeed;
+            yAxis = -walkSpeed;
             wasMovingUP = false;
             wasMovingDOWN = true;
         }
-        else if (0 < yAxis && !isAttacking)
+        else if (0 < yAxis && !isAttacking && !isUsingItem)
         {
             // flip the animation for the direction we are headed
             transform.localScale = new Vector2(1, 1);
-            vel.y = walkSpeed;
+            yAxis = walkSpeed;
             wasMovingUP = true;
             wasMovingDOWN = false;
         }
         else
         {
-            vel.y = 0;
+            yAxis = 0;
         }
+    }
 
-        // check for attack
-        if (isAttackPressed)
+    void CheckAttackPress()
+    {
+        if (isAttackPressed && !isUsingItem)
         {
             isAttackPressed = false;
 
             // set both movements to 0. We do not allow attacking and moving
-            vel.x = 0;
-            vel.y = 0;
+            xAxis = 0;
+            yAxis = 0;
 
             if (!isAttacking)
             {
@@ -163,17 +246,18 @@ public class PlayerMovement : MonoBehaviour
                 Invoke("AttackComplete", animator.GetCurrentAnimatorStateInfo(0).length);
             }
         }
+    }
 
-        // check for item use
+    void CheckItemPress()
+    {
         // AJK: TO BE ADDED AT A LATER DATE
-        // check for attack
-        if (isItemPressed)
+        if (isItemPressed && !isAttacking)
         {
             isItemPressed = false;
 
             // set both movements to 0. We do not allow attacking and moving
-            vel.x = 0;
-            vel.y = 0;
+            xAxis = 0;
+            yAxis = 0;
 
             if (!isUsingItem)
             {
@@ -185,90 +269,6 @@ public class PlayerMovement : MonoBehaviour
                 Invoke("AttackComplete", animator.GetCurrentAnimatorStateInfo(0).length);
             }
         }
-
-        //change animation
-        if (xAxis != 0)
-        {
-            ChangeAnimationState(PLAYER_X_MOVE);
-            wasMovingUP = false;
-            wasMovingDOWN = false;
-        }
-        else if(yAxis != 0)
-        {
-            if(yAxis < 0)
-            {
-                ChangeAnimationState(PLAYER_DOWN_MOVE);
-            }
-            else
-            {
-                ChangeAnimationState(PLAYER_UP_MOVE);
-            }
-        }
-        else if (wasMovingUP == true)
-        {
-            ChangeAnimationState(PLAYER_UP_IDLE);
-        }
-        else if (wasMovingDOWN == true)
-        {
-            ChangeAnimationState(PLAYER_DOWN_IDLE);
-        }
-        else if (!isAttacking)
-        {
-            ChangeAnimationState(PLAYER_X_IDLE);
-        }
-
-        // finally move our character
-        MoveCharacter(vel);
-    }
-
-    void UpdateAnimationAndMove()
-    {
-        bool isMovingHorizontal = Mathf.Abs(change.x) > 0;
-        bool isMovingVertical = Mathf.Abs(change.y) > 0;
-
-        // check for diagonal movement
-        if (isMovingVertical && isMovingHorizontal)
-        {
-            //moving in both directions, prioritize later
-            if (wasMovingVertical)
-            {
-                change.y = 0;
-            }
-            else
-            {
-                change.x = 0;
-            }
-        }
-        else if (isMovingHorizontal)
-        {
-            wasMovingVertical = false;
-        }
-        else if (isMovingVertical)
-        {
-            wasMovingVertical = true;
-        }
-
-        // move character if we have speed to do so
-        if(change != Vector3.zero)
-        {
-            MoveCharacter(change);
-            //ChangeAnimationState(PLAYER_MOVE);
-        }
-        else
-        {
-            //ChangeAnimationState(PLAYER_MOVE);
-        }
-    }
-
-    // Allows other "outside sources" to move the character if needed.
-    void MoveCharacter(Vector2 velocity)
-    {
-        // this line of code was making weird things happen such as the demo in unity being choppy and slow 
-        //  compared to the build application being smooth and quicker. The following line seems to have
-        //  fixed these issues...but the second line will cause jittering
-        // SOLVED: replace 'Update()' with 'FixedUpdate()' and this line of code works perfectly
-        rb2d.velocity = velocity;
-        //transform.position = transform.position + delta * speed * Time.deltaTime;
     }
 
     void AttackComplete()
