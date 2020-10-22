@@ -1,10 +1,23 @@
-﻿using ActionCode.ColorPalettes;
+﻿#define LOGS
+#define DEBUG
+
+using ActionCode.ColorPalettes;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerState
+{
+    WALK,
+    ATTACK,
+    ITEM,
+    INTERACT
+}
+
 public class PlayerMovement : MonoBehaviour
 {
+    public PlayerState currentState;
     [SerializeField]
     private sbyte walkSpeed = 4;
 
@@ -15,24 +28,28 @@ public class PlayerMovement : MonoBehaviour
     private float xAxis;
     private float yAxis;
     private Rigidbody2D rb2d;
-    private bool isItemPressed;
-    private bool isUsingItem;
-    private bool isAttackPressed;
-    private bool isAttacking;
     private string currentAnimaton;
 
-    // animation states
-    const string PLAYER_X_IDLE = "Player_X_idle";
-    const string PLAYER_X_MOVE = "Player_X_move";
-    const string PLAYER_X_ATTACK = "Player_X_attack";
+    // item variable
+    [SerializeField]
+    private bool hasBigShield = false;
 
-    const string PLAYER_UP_IDLE = "Player_UP_idle";
-    const string PLAYER_UP_MOVE = "Player_UP_move";
-    const string PLAYER_UP_ATTACK = "Player_UP_attack";
 
-    const string PLAYER_DOWN_IDLE = "Player_DOWN_idle";
-    const string PLAYER_DOWN_MOVE = "Player_DOWN_move";
-    const string PLAYER_DOWN_ATTACK = "Player_DOWN_attack";
+    // animation states 2.0
+    // axis movement
+    const string PICKUP = "PICKUP";
+    const string UP = "UP";
+    const string DOWN = "DOWN";
+    const string HORIZONTAL = "X";
+
+    // states
+    const string IDLE = "_IDLE";
+    const string MOVE = "_MOVE";
+    const string ATTACK = "_ATTACK";
+
+    // shield type
+    const string SMALL = "_s";
+    const string BIG = "_S";
 
     private bool wasMovingVertical = false;
     private bool wasMovingUP = false;
@@ -41,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentState = PlayerState.WALK;
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         swapper = GetComponent<ColorPaletteSwapperCycle>();
@@ -59,18 +77,23 @@ public class PlayerMovement : MonoBehaviour
         yAxis = Input.GetAxisRaw("Vertical");
 
         // [2] 'A' key pressed
-        if (Input.GetKeyDown(KeyCode.Keypad2))
+        if (Input.GetButtonDown("Attack") && currentState == PlayerState.WALK)
         {
-            isAttackPressed = true;
+            //isAttackPressed = true;
+            StartCoroutine(AttackCo());
         }
-        else
         // [1] 'B' key pressed
-        if (Input.GetKeyDown(KeyCode.Keypad1))
+        else if (Input.GetButtonDown("Item") && currentState == PlayerState.WALK)
         {
-            isItemPressed = true;
+            //isItemPressed = true;
+            StartCoroutine(ItemCo());
         }
 
+#if DEBUG
         if (Input.GetKeyDown(KeyCode.C)) swapper.SwapPalette();
+
+        if (Input.GetKeyDown(KeyCode.V)) hasBigShield = !hasBigShield;
+#endif
     }
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -78,20 +101,16 @@ public class PlayerMovement : MonoBehaviour
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     void FixedUpdate()
     {
+        if(currentState != PlayerState.WALK)
+        {
+            return;
+        }
         // check for two keys being pressed at once
         CheckDiagonal();
-
         // check our X movement
         CheckXMovement();
-
         // check our Y movement
         CheckYMovement();
-
-        // check for attack
-        CheckAttackPress();
-
-        // check for item use
-        CheckItemPress();
 
 
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -109,9 +128,21 @@ public class PlayerMovement : MonoBehaviour
 
     void UpdateAnimations()
     {
+        string nextAnimation = "";
         if (xAxis != 0)
         {
-            ChangeAnimationState(PLAYER_X_MOVE);
+            nextAnimation += HORIZONTAL + MOVE;
+
+            // check to see what shield we have
+            if(hasBigShield)
+            {
+                nextAnimation += BIG;
+            }
+            else
+            {
+                nextAnimation += SMALL;
+            }
+
             wasMovingUP = false;
             wasMovingDOWN = false;
         }
@@ -119,36 +150,68 @@ public class PlayerMovement : MonoBehaviour
         {
             if (yAxis < 0)
             {
-                ChangeAnimationState(PLAYER_DOWN_MOVE);
+                nextAnimation += DOWN + MOVE;
+
+                // check to see what shield we have
+                if (hasBigShield)
+                {
+                    nextAnimation += BIG;
+                }
+                else
+                {
+                    nextAnimation += SMALL;
+                }
             }
             else
             {
-                ChangeAnimationState(PLAYER_UP_MOVE);
+                nextAnimation += UP + MOVE;
             }
         }
         else if (wasMovingUP == true)
         {
-            ChangeAnimationState(PLAYER_UP_IDLE);
+            nextAnimation += UP + IDLE;
         }
         else if (wasMovingDOWN == true)
         {
-            ChangeAnimationState(PLAYER_DOWN_IDLE);
+            nextAnimation += DOWN + IDLE;
+
+            // check to see what shield we have
+            if (hasBigShield)
+            {
+                nextAnimation += BIG;
+            }
+            else
+            {
+                nextAnimation += SMALL;
+            }
         }
-        else if (!isAttacking)
+        else
         {
-            ChangeAnimationState(PLAYER_X_IDLE);
+            nextAnimation += HORIZONTAL + IDLE;
+
+            // check to see what shield we have
+            if (hasBigShield)
+            {
+                nextAnimation += BIG;
+            }
+            else
+            {
+                nextAnimation += SMALL;
+            }
         }
+
+#if LOGS
+        print(nextAnimation);
+#endif
+
+        //AJK: will only have one ChangeAnimationState here once the string is built
+        ChangeAnimationState(nextAnimation);
     }
 
     // Allows other "outside sources" to move the character if needed.
     void MoveCharacter(Vector2 velocity)
     {
-        // this line of code was making weird things happen such as the demo in unity being choppy and slow 
-        //  compared to the build application being smooth and quicker. The following line seems to have
-        //  fixed these issues...but the second line will cause jittering
-        // SOLVED: replace 'Update()' with 'FixedUpdate()' and this line of code works perfectly
         rb2d.velocity = velocity;
-        //transform.position = transform.position + delta * speed * Time.deltaTime;
     }
 
     void CheckDiagonal()
@@ -181,16 +244,15 @@ public class PlayerMovement : MonoBehaviour
             xAxis = 0;
         }
     }
-
     void CheckXMovement()
     {
-        if (xAxis < 0 && !isAttacking && !isUsingItem)
+        if (xAxis < 0)
         {
             // flip the animation for the direction we are headed
             transform.localScale = new Vector2(-1, 1);
             xAxis = -walkSpeed;
         }
-        else if (0 < xAxis && !isAttacking && !isUsingItem)
+        else if (0 < xAxis)
         {
             // flip the animation for the direction we are headed
             transform.localScale = new Vector2(1, 1);
@@ -201,10 +263,9 @@ public class PlayerMovement : MonoBehaviour
             xAxis = 0;
         }
     }
-
     void CheckYMovement()
     {
-        if (yAxis < 0 && !isAttacking && !isUsingItem)
+        if (yAxis < 0)
         {
             // flip the animation for the direction we are headed
             transform.localScale = new Vector2(1, 1);
@@ -212,7 +273,7 @@ public class PlayerMovement : MonoBehaviour
             wasMovingUP = false;
             wasMovingDOWN = true;
         }
-        else if (0 < yAxis && !isAttacking && !isUsingItem)
+        else if (0 < yAxis)
         {
             // flip the animation for the direction we are headed
             transform.localScale = new Vector2(1, 1);
@@ -226,57 +287,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void CheckAttackPress()
-    {
-        if (isAttackPressed && !isUsingItem)
-        {
-            isAttackPressed = false;
-
-            // set both movements to 0. We do not allow attacking and moving
-            xAxis = 0;
-            yAxis = 0;
-
-            if (!isAttacking)
-            {
-                isAttacking = true;
-                //AJK: WILL NEED TO SEE WHAT SHIELD/SWORD IS EQUIPED
-
-                //ChangeAnimationState(PLAYER_ATTACK);
-
-                Invoke("AttackComplete", animator.GetCurrentAnimatorStateInfo(0).length);
-            }
-        }
-    }
-
-    void CheckItemPress()
-    {
-        // AJK: TO BE ADDED AT A LATER DATE
-        if (isItemPressed && !isAttacking)
-        {
-            isItemPressed = false;
-
-            // set both movements to 0. We do not allow attacking and moving
-            xAxis = 0;
-            yAxis = 0;
-
-            if (!isUsingItem)
-            {
-                isUsingItem = true;
-
-                //AJK: FIND OUT WHAT ITEM IS BEING USED IN B
-                //ChangeAnimationState(PLAYER_ATTACK);
-
-                Invoke("AttackComplete", animator.GetCurrentAnimatorStateInfo(0).length);
-            }
-        }
-    }
-
-    void AttackComplete()
-    {
-        isAttacking = false;
-        isUsingItem = false;
-    }
-
     void ChangeAnimationState(string newAnimation)
     {
         // stop the same animation from interrupting itslef
@@ -287,5 +297,69 @@ public class PlayerMovement : MonoBehaviour
 
         // reassign the current state
         currentAnimaton = newAnimation;
+    }
+
+
+    private IEnumerator AttackCo()
+    {
+        string nextAnimation = "";
+
+        // make sure the character is not moving
+        MoveCharacter(new Vector2(0, 0));
+        currentState = PlayerState.ATTACK;
+
+        if (wasMovingUP)
+        {
+            nextAnimation += UP;
+        }
+        else if(wasMovingDOWN)
+        {
+            nextAnimation += DOWN;
+        }
+        else
+        {
+            nextAnimation += HORIZONTAL;
+        }
+        nextAnimation += ATTACK;
+
+        //AJK: WILL NEED TO SEE WHAT SWORD IS EQUIPED for which one to draw
+        ChangeAnimationState(nextAnimation);
+        yield return new WaitForEndOfFrame();
+
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        currentState = PlayerState.WALK;
+    }
+
+    private IEnumerator ItemCo()
+    {
+        string nextAnimation = "";
+
+        // make sure the character is not moving
+        MoveCharacter(new Vector2(0, 0));
+        currentState = PlayerState.ITEM;
+
+        if (wasMovingUP)
+        {
+            nextAnimation += UP;
+        }
+        else if (wasMovingDOWN)
+        {
+            nextAnimation += DOWN;
+        }
+        else
+        {
+            nextAnimation += HORIZONTAL;
+        }
+        nextAnimation += ATTACK;
+
+        //AJK: WILL NEED TO SEE WHAT ITEM IS EQUIPED for which one to draw
+#if DEBUG
+        ChangeAnimationState(PICKUP);
+#else
+        ChangeAnimationState(nextAnimation);
+#endif
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        currentState = PlayerState.WALK;
     }
 }

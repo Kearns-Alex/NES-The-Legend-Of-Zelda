@@ -4,31 +4,55 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 4078214367651993691
-    second: Link_DOWN_SM_1
+    second: Link_DOWN_MOVE_0
   - first:
       213: -14304604631657636
-    second: Link_DOWN_SM_2
+    second: Link_DOWN_MOVE_1
   - first:
       213: 8141232512686884259
-    second: Link_X_SM_1
+    second: Link_X_MOVE_0
   - first:
       213: -2932640659267146327
-    second: Link_X_SM_2
+    second: Link_X_MOVE_1
   - first:
       213: -5684215074940644168
-    second: Link_UP_1
+    second: Link_UP_MOVE_0
   - first:
       213: -3627968211040010011
-    second: Link_UP_2
+    second: Link_UP_MOVE_1
   - first:
       213: 3992757504709965163
-    second: Link_Palette_0
+    second: Link_Palette_G
   - first:
       213: 2316092996510735789
-    second: Link_Palette_1
+    second: Link_Palette_W
   - first:
       213: 1494571817327701792
-    second: Link_Palette_2
+    second: Link_Palette_R
+  - first:
+      213: -2462284958210887030
+    second: Link_DOWN_ATTACK
+  - first:
+      213: -2313710045790055326
+    second: Link_DOWN_MOVE_2
+  - first:
+      213: -5620899581627125786
+    second: Link_DOWN_MOVE_3
+  - first:
+      213: 1298301457661830658
+    second: Link_X_MOVE_2
+  - first:
+      213: 6123150990719619775
+    second: Link_X_MOVE_3
+  - first:
+      213: -7474904495656066604
+    second: Link_X_ATTACK
+  - first:
+      213: 5959012949725229283
+    second: Link_UP_ATTACK
+  - first:
+      213: 517400925642820919
+    second: Link_PICKUP
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -114,7 +138,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Link_DOWN_SM_1
+      name: Link_DOWN_MOVE_0
       rect:
         serializedVersion: 2
         x: 1
@@ -135,7 +159,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_DOWN_SM_2
+      name: Link_DOWN_MOVE_1
       rect:
         serializedVersion: 2
         x: 18
@@ -156,7 +180,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_X_SM_1
+      name: Link_X_MOVE_0
       rect:
         serializedVersion: 2
         x: 35
@@ -177,7 +201,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_X_SM_2
+      name: Link_X_MOVE_1
       rect:
         serializedVersion: 2
         x: 52
@@ -198,7 +222,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_UP_1
+      name: Link_UP_MOVE_0
       rect:
         serializedVersion: 2
         x: 69
@@ -219,7 +243,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_UP_2
+      name: Link_UP_MOVE_1
       rect:
         serializedVersion: 2
         x: 86
@@ -240,7 +264,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_Palette_0
+      name: Link_Palette_G
       rect:
         serializedVersion: 2
         x: 6
@@ -248,7 +272,7 @@ TextureImporter:
         width: 2
         height: 2
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -261,7 +285,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_Palette_1
+      name: Link_Palette_W
       rect:
         serializedVersion: 2
         x: 23
@@ -269,7 +293,7 @@ TextureImporter:
         width: 2
         height: 2
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -282,7 +306,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_Palette_2
+      name: Link_Palette_R
       rect:
         serializedVersion: 2
         x: 40
@@ -290,7 +314,7 @@ TextureImporter:
         width: 2
         height: 2
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -298,6 +322,174 @@ TextureImporter:
       bones: []
       spriteID: 02fa0273629cdb410800000000000000
       internalID: 1494571817327701792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_DOWN_ATTACK
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 283
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a827d0250e434ddd0800000000000000
+      internalID: -2462284958210887030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_DOWN_MOVE_2
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 283
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2645e6fc8fc04efd0800000000000000
+      internalID: -2313710045790055326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_DOWN_MOVE_3
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 283
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ef29fe7c9d8ef1b0800000000000000
+      internalID: -5620899581627125786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_X_MOVE_2
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 283
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2062e4b0c4e740210800000000000000
+      internalID: 1298301457661830658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_X_MOVE_3
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 283
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb29ceb526dc9f450800000000000000
+      internalID: 6123150990719619775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_X_ATTACK
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 283
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d1237607fdc34890800000000000000
+      internalID: -7474904495656066604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_UP_ATTACK
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 283
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e03350a4baa2b250800000000000000
+      internalID: 5959012949725229283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_PICKUP
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 283
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73d066b866d2e2700800000000000000
+      internalID: 517400925642820919
       vertices: []
       indices: 
       edges: []

@@ -56,7 +56,7 @@ public class ScreenMove : MonoBehaviour
 				{
 					_cameraChange.y *= -1;
 					_playerChange.y *= -1;
-#if (LOGS)
+#if LOGS
 					print("Move South");
 				}
 				else
@@ -75,7 +75,7 @@ public class ScreenMove : MonoBehaviour
 				{
 					_cameraChange.x *= -1;
 					_playerChange.x *= -1;
-#if (LOGS)
+#if LOGS
 					print("Move West");
 				}
 				else
