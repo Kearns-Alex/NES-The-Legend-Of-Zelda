@@ -29,5 +29,13 @@ namespace ActionCode.ColorPalettes
             _palletIndex = (_palletIndex + 1) % palettes.Length;
             swapper.SwitchPalette(palettes[_palletIndex]);
         }
+
+        public void SwapPalette(int index)
+        {
+            // check to see if we are out of range
+            if (palettes.Length < index) return;
+
+            swapper.SwitchPalette(palettes[index]);
+        }
     }
 }

@@ -25,7 +25,7 @@ TextureImporter:
     second: Link_Palette_G
   - first:
       213: 2316092996510735789
-    second: Link_Palette_W
+    second: Link_Palette_B
   - first:
       213: 1494571817327701792
     second: Link_Palette_R
@@ -53,6 +53,66 @@ TextureImporter:
   - first:
       213: 517400925642820919
     second: Link_PICKUP
+  - first:
+      213: 4078214367651993691
+    second: Link_DOWN_MOVE_0
+  - first:
+      213: -14304604631657636
+    second: Link_DOWN_MOVE_1
+  - first:
+      213: 8141232512686884259
+    second: Link_X_MOVE_0
+  - first:
+      213: -2932640659267146327
+    second: Link_X_MOVE_1
+  - first:
+      213: -5684215074940644168
+    second: Link_UP_MOVE_0
+  - first:
+      213: -3627968211040010011
+    second: Link_UP_MOVE_1
+  - first:
+      213: 3992757504709965163
+    second: Link_DOWN_ATTACK
+  - first:
+      213: 2316092996510735789
+    second: Link_X_ATTACK
+  - first:
+      213: 1494571817327701792
+    second: Link_UP_ATTACK
+  - first:
+      213: -2462284958210887030
+    second: Link_PICKUP
+  - first:
+      213: -2313710045790055326
+    second: Link_DOWN_MOVE_2
+  - first:
+      213: -5620899581627125786
+    second: Link_DOWN_MOVE_3
+  - first:
+      213: 1298301457661830658
+    second: Link_X_MOVE_2
+  - first:
+      213: 6123150990719619775
+    second: Link_X_MOVE_3
+  - first:
+      213: -7474904495656066604
+    second: Link_Palette_G
+  - first:
+      213: 5959012949725229283
+    second: Link_Palette_B
+  - first:
+      213: 517400925642820919
+    second: Link_Palette_R
+  - first:
+      213: 4886214064594197332
+    second: Link_Palette_D1
+  - first:
+      213: 3808069746938312184
+    second: Link_Palette_D2
+  - first:
+      213: 3935951358182305603
+    second: Link_Palette_D3
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -141,8 +201,8 @@ TextureImporter:
       name: Link_DOWN_MOVE_0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 283
+        x: 0
+        y: 18
         width: 16
         height: 16
       alignment: 0
@@ -162,8 +222,8 @@ TextureImporter:
       name: Link_DOWN_MOVE_1
       rect:
         serializedVersion: 2
-        x: 18
-        y: 283
+        x: 17
+        y: 18
         width: 16
         height: 16
       alignment: 0
@@ -183,8 +243,8 @@ TextureImporter:
       name: Link_X_MOVE_0
       rect:
         serializedVersion: 2
-        x: 35
-        y: 283
+        x: 34
+        y: 18
         width: 16
         height: 16
       alignment: 0
@@ -204,8 +264,8 @@ TextureImporter:
       name: Link_X_MOVE_1
       rect:
         serializedVersion: 2
-        x: 52
-        y: 283
+        x: 51
+        y: 18
         width: 16
         height: 16
       alignment: 0
@@ -225,8 +285,8 @@ TextureImporter:
       name: Link_UP_MOVE_0
       rect:
         serializedVersion: 2
-        x: 69
-        y: 283
+        x: 68
+        y: 18
         width: 16
         height: 16
       alignment: 0
@@ -246,8 +306,8 @@ TextureImporter:
       name: Link_UP_MOVE_1
       rect:
         serializedVersion: 2
-        x: 86
-        y: 283
+        x: 85
+        y: 18
         width: 16
         height: 16
       alignment: 0
@@ -264,13 +324,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_Palette_G
+      name: Link_DOWN_ATTACK
       rect:
         serializedVersion: 2
-        x: 6
-        y: 76
-        width: 2
-        height: 2
+        x: 102
+        y: 18
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -285,13 +345,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_Palette_W
+      name: Link_X_ATTACK
       rect:
         serializedVersion: 2
-        x: 23
-        y: 76
-        width: 2
-        height: 2
+        x: 119
+        y: 18
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -306,13 +366,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_Palette_R
+      name: Link_UP_ATTACK
       rect:
         serializedVersion: 2
-        x: 40
-        y: 76
-        width: 2
-        height: 2
+        x: 136
+        y: 18
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -327,15 +387,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_DOWN_ATTACK
+      name: Link_PICKUP
       rect:
         serializedVersion: 2
-        x: 107
-        y: 283
+        x: 153
+        y: 18
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -351,12 +411,12 @@ TextureImporter:
       name: Link_DOWN_MOVE_2
       rect:
         serializedVersion: 2
-        x: 289
-        y: 283
+        x: 0
+        y: 1
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -372,12 +432,12 @@ TextureImporter:
       name: Link_DOWN_MOVE_3
       rect:
         serializedVersion: 2
-        x: 306
-        y: 283
+        x: 17
+        y: 1
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -393,12 +453,12 @@ TextureImporter:
       name: Link_X_MOVE_2
       rect:
         serializedVersion: 2
-        x: 323
-        y: 283
+        x: 34
+        y: 1
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -414,12 +474,12 @@ TextureImporter:
       name: Link_X_MOVE_3
       rect:
         serializedVersion: 2
-        x: 340
-        y: 283
+        x: 51
+        y: 1
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -432,15 +492,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_X_ATTACK
+      name: Link_Palette_G
       rect:
         serializedVersion: 2
-        x: 124
-        y: 283
+        x: 68
+        y: 1
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -453,15 +513,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_UP_ATTACK
+      name: Link_Palette_B
       rect:
         serializedVersion: 2
-        x: 141
-        y: 283
+        x: 85
+        y: 1
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -474,11 +534,32 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Link_PICKUP
+      name: Link_Palette_R
       rect:
         serializedVersion: 2
-        x: 230
-        y: 283
+        x: 102
+        y: 1
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73d066b866d2e2700800000000000000
+      internalID: 517400925642820919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_Palette_D1
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 1
         width: 16
         height: 16
       alignment: 0
@@ -488,8 +569,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 73d066b866d2e2700800000000000000
-      internalID: 517400925642820919
+      spriteID: 45b97a0bdc15fc340800000000000000
+      internalID: 4886214064594197332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_Palette_D2
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 1
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f57b22424bf8d430800000000000000
+      internalID: 3808069746938312184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Link_Palette_D3
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 1
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34f2cad18ee4f9630800000000000000
+      internalID: 3935951358182305603
       vertices: []
       indices: 
       edges: []
