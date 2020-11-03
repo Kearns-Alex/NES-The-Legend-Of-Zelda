@@ -8,6 +8,10 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 
+#if DEBUG
+using UnityEngine.Assertions;
+#endif
+
 public enum PlayerState
 {
     WALK,
@@ -37,6 +41,9 @@ public class PlayerScript : MonoBehaviour
     private byte damageFlash = 3;
     [SerializeField]
     private float damageFlashTime = 0.05f;
+    private int currentHealth = 3;
+    private int maxHealth = 13;
+    private bool hasMaxHealth = false;
 
     private Animator animator;
     private ColorPaletteSwapperCycle swapper;
@@ -53,6 +60,11 @@ public class PlayerScript : MonoBehaviour
     private bool hasBlueRing = false;
     private bool hasRedRing = false;
     private bool hasBigShield = false;
+
+    Object swordRef;
+    public Sword currentSword;
+
+    //public Item currentItem;
 
 
     // animation states 2.0
@@ -72,12 +84,15 @@ public class PlayerScript : MonoBehaviour
     const string BIG = "_S";
 
     private bool wasMovingVertical = false;
-    private bool wasMovingUP = false;
-    private bool wasMovingDOWN = true;
+
+    private int lookingHorizontal = 0;
+    private int lookingVertical = -1;
 
     // Start is called before the first frame update
     void Start()
     {
+        swordRef = Resources.Load("Sword");
+        currentSword = Sword.NONE;
         currentState = PlayerState.WALK;
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -95,29 +110,18 @@ public class PlayerScript : MonoBehaviour
         xAxis = Input.GetAxisRaw("Horizontal");
         yAxis = Input.GetAxisRaw("Vertical");
 
-        // [2] 'A' key pressed
-        if (Input.GetButtonDown("Attack") && currentState == PlayerState.WALK)
-        {
-            //isAttackPressed = true;
-            StartCoroutine(AttackCo());
-        }
-        // [1] 'B' key pressed
-        else if (Input.GetButtonDown("Item") && currentState == PlayerState.WALK)
-        {
-            //isItemPressed = true;
-            StartCoroutine(ItemCo());
-        }
-
+        // action key is pressed
+        if ((Input.GetButtonDown("Attack") || Input.GetButtonDown("Item")) 
+            && currentState == PlayerState.WALK) 
+            StartCoroutine(ActionCo());
+        
 #if DEBUG
         if (Input.GetKeyDown(KeyCode.Z)) hasBigShield = !hasBigShield;
-
         if (Input.GetKeyDown(KeyCode.X)) hasBlueRing = !hasBlueRing;
-
         if (Input.GetKeyDown(KeyCode.C)) hasRedRing = !hasRedRing;
-
         if (Input.GetKeyDown(KeyCode.V)) RingCheck();
-
         if (Input.GetKeyDown(KeyCode.B)) StartCoroutine(DamageTaken());
+        if (Input.GetKeyDown(KeyCode.N)) if ((System.Enum.GetNames(typeof(Sword)).Length - 1) < (int)++currentSword) currentSword = Sword.NONE;
 #endif
     }
 
@@ -126,16 +130,10 @@ public class PlayerScript : MonoBehaviour
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     void FixedUpdate()
     {
-        if(currentState != PlayerState.WALK)
-        {
-            return;
-        }
+        if(currentState != PlayerState.WALK) return;
+
         // check for two keys being pressed at once
         CheckDiagonal();
-        // check our X movement
-        CheckXMovement();
-        // check our Y movement
-        CheckYMovement();
 
 
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -187,71 +185,42 @@ public class PlayerScript : MonoBehaviour
         if (isMovingVertical && isMovingHorizontal)
         {
             //moving in both directions, prioritize the first
-            if (wasMovingVertical)
-            {
-                wasMovingUP = false;
-                wasMovingDOWN = false;
-                yAxis = 0;
-            }
-            else
-            {
-                xAxis = 0;
-            }
+            // X MOVEMENT
+            if (wasMovingVertical) UpdateXMovement();
+            // Y MOVEMENT
+            else UpdateYMovement();
         }
         else if (isMovingHorizontal)
         {
+            // X MOVEMENT
             wasMovingVertical = false;
-            wasMovingUP = false;
-            wasMovingDOWN = false;
-            yAxis = 0;
+            UpdateXMovement();
         }
         else if (isMovingVertical)
         {
+            // Y MOVEMENT
             wasMovingVertical = true;
-            xAxis = 0;
+            UpdateYMovement();
         }
     }
-    void CheckXMovement()
+    void UpdateXMovement()
     {
-        if (xAxis < 0)
-        {
-            // flip the animation for the direction we are headed
-            transform.localScale = new Vector2(-1, 1);
-            xAxis = -walkSpeed;
-        }
-        else if (0 < xAxis)
-        {
-            // flip the animation for the direction we are headed
-            transform.localScale = new Vector2(1, 1);
-            xAxis = walkSpeed;
-        }
-        else
-        {
-            xAxis = 0;
-        }
+        lookingVertical = 0;
+        lookingHorizontal = Mathf.Clamp((int)xAxis, -1, 1);
+        yAxis = 0;
+#if DEBUG
+        Assert.AreNotEqual(0, (int)lookingHorizontal);
+#endif
+        transform.localScale = new Vector2((1 * lookingHorizontal), 1);
+        xAxis = (walkSpeed * lookingHorizontal);
     }
-    void CheckYMovement()
+    void UpdateYMovement()
     {
-        if (yAxis < 0)
-        {
-            // flip the animation for the direction we are headed
-            transform.localScale = new Vector2(1, 1);
-            yAxis = -walkSpeed;
-            wasMovingUP = false;
-            wasMovingDOWN = true;
-        }
-        else if (0 < yAxis)
-        {
-            // flip the animation for the direction we are headed
-            transform.localScale = new Vector2(1, 1);
-            yAxis = walkSpeed;
-            wasMovingUP = true;
-            wasMovingDOWN = false;
-        }
-        else
-        {
-            yAxis = 0;
-        }
+        lookingHorizontal = 0;
+        lookingVertical = Mathf.Clamp((int)yAxis, -1, 1);
+        xAxis = 0;
+        transform.localScale = new Vector2(1, 1);
+        yAxis = (walkSpeed * lookingVertical);
     }
 
     void ChangeAnimationState(string newAnimation)
@@ -266,39 +235,48 @@ public class PlayerScript : MonoBehaviour
         currentAnimaton = newAnimation;
     }
 
-    private IEnumerator AttackCo()
+    private IEnumerator ActionCo()
     {
         string nextAnimation = XYCheck(ATTACK, false);
 
         // make sure the character is not moving
         MoveCharacter(new Vector2(0, 0));
-        currentState = PlayerState.ATTACK;
 
-        //AJK: WILL NEED TO SEE WHAT SWORD IS EQUIPED for which one to draw
-        ChangeAnimationState(nextAnimation);
-        yield return new WaitForEndOfFrame();
-
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
-        currentState = PlayerState.WALK;
-    }
-    private IEnumerator ItemCo()
-    {
-        string nextAnimation = XYCheck(ATTACK, false);
-
-        // make sure the character is not moving
-        MoveCharacter(new Vector2(0, 0));
-        currentState = PlayerState.ITEM;
-
-        //AJK: WILL NEED TO SEE WHAT ITEM IS EQUIPED for which one to draw
+        // [2] 'A' key pressed
+        if (Input.GetButtonDown("Attack"))
+        {
+            currentState = PlayerState.ATTACK;
+            if (currentSword != Sword.NONE) SwordLogic();
+        }
+        // [1] 'B' key pressed
+        else
+        {
+            currentState = PlayerState.ITEM;
+            /*if (currentItem != Item.NONE)*/ ItemLogic();
 #if DEBUG
-        ChangeAnimationState(PICKUP);
-#else
-        ChangeAnimationState(nextAnimation);
+            nextAnimation = PICKUP;
 #endif
+        }
+
+        ChangeAnimationState(nextAnimation);
+
         yield return new WaitForEndOfFrame();
+
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
         currentState = PlayerState.WALK;
     }
+
+    private void SwordLogic()
+    {
+        GameObject sword = (GameObject)Instantiate(swordRef);
+        sword.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        sword.GetComponent<SwordScript>().Swing(currentSword, lookingHorizontal, lookingVertical, hasMaxHealth);
+    }
+    private void ItemLogic()
+    {
+
+    }
+
     private IEnumerator DamageTaken()
     {
         for (int i = 0; i < damageFlash; i++)
@@ -318,11 +296,13 @@ public class PlayerScript : MonoBehaviour
 
     private string XYCheck(string action, bool doShieldCheck)
     {
-        if (wasMovingUP)
+        //if (wasMovingUP)
+        if (0 < lookingVertical)
         {
             return UP + action;
         }
-        else if (wasMovingDOWN)
+        //else if (wasMovingDOWN)
+        else if (lookingVertical < 0)
         {
             return DOWN + action + ShieldCheck(doShieldCheck);
         }
