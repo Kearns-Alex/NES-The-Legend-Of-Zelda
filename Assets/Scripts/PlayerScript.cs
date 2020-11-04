@@ -17,7 +17,8 @@ public enum PlayerState
     WALK,
     ATTACK,
     ITEM,
-    INTERACT
+    INTERACT,
+    PAUSE
 }
 
 public enum Tunic
@@ -106,6 +107,8 @@ public class PlayerScript : MonoBehaviour
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private void Update()
     {
+        if (currentState == PlayerState.PAUSE) return;
+
         // goes directly to 1. No accelleration 
         xAxis = Input.GetAxisRaw("Horizontal");
         yAxis = Input.GetAxisRaw("Vertical");
@@ -122,6 +125,7 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.V)) RingCheck();
         if (Input.GetKeyDown(KeyCode.B)) StartCoroutine(DamageTaken());
         if (Input.GetKeyDown(KeyCode.N)) if ((System.Enum.GetNames(typeof(Sword)).Length - 1) < (int)++currentSword) currentSword = Sword.NONE;
+        if (Input.GetKeyDown(KeyCode.M)) hasMaxHealth = !hasMaxHealth;
 #endif
     }
 

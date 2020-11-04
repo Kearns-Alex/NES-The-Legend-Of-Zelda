@@ -72,4 +72,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: 1
   cameraChange: {x: 16, y: 11}
-  playerChange: {x: 0.75, y: 0.5, z: 0}
+  playerChange: {x: 0.5, y: 0.5, z: 0}

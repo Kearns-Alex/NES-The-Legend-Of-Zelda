@@ -14,8 +14,10 @@ public class SwordScript : MonoBehaviour
 {
 
     private Vector3 targetPosition;
+    private Vector3 originalPosition;
     private bool willShoot = false;
     private bool isBeam = false;
+    private bool isDiagonal = false;
 
     Object swordRef;
     private int lookingHorizontal = 0;
@@ -35,43 +37,56 @@ public class SwordScript : MonoBehaviour
     {
         swordRef = Resources.Load("Sword");
         animator = GetComponent<Animator>();
-        bc2d = GetComponent<BoxCollider2D>();
-        rb2d = GetComponent<Rigidbody2D>();
+        bc2d     = GetComponent<BoxCollider2D>();
+        rb2d     = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (transform.position != targetPosition && !isBeam)
+        if(isBeam || isDiagonal) return;
+
+        if (transform.position != targetPosition)
         {
             // move to a sinle place
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, .1f);
-            //transform.position = Vector3.MoveTowards(transform.position, targetPosition, 2);
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, .2f);
         }
-        else if (!isBeam && willShoot)
+        else if (transform.position == targetPosition && willShoot)
         {
             GameObject sword = (GameObject)Instantiate(swordRef);
             sword.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-            sword.GetComponent<SwordScript>().shoot(lookingHorizontal, lookingVertical);
+            sword.GetComponent<SwordScript>().Shoot(lookingHorizontal, lookingVertical);
 
+            willShoot = false;
+        }
+        else if (transform.position == targetPosition && targetPosition != originalPosition)
+        {
+            targetPosition = originalPosition;
+        }
+        else if (transform.position == targetPosition && targetPosition == originalPosition)
+        {
             DestroyYourself();
         }
-
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!isBeam) return;
+
         if (collision.CompareTag("Wall"))
         {
+            SpawnDiagonals();
             DestroyYourself();
+        }
+    }
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        if (!isBeam) return;
 
-            //AJK: spawn the diagonal animations
-            if(isBeam)
-            {
-                //GameObject sword = (GameObject)Instantiate(swordRef);
-                //sword.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-                //sword.GetComponent<SwordScript>().Swing(currentSword, lookingHorizontal, lookingVertical, true);
-            }
+        if (collision.CompareTag("MainCamera"))
+        {
+            SpawnDiagonals();
+            DestroyYourself();
         }
     }
 
@@ -80,14 +95,27 @@ public class SwordScript : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void SpawnDiagonals()
+    {
+        SpawnDiagonal(1, 1);
+        SpawnDiagonal(-1, 1);
+        SpawnDiagonal(1, -1);
+        SpawnDiagonal(-1, -1);
+    }
+    public void SpawnDiagonal(short x, short y)
+    {
+        GameObject sword = (GameObject)Instantiate(swordRef);
+        sword.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        sword.GetComponent<SwordScript>().Diagonal(x, y);
+    }
+
     public void Swing(Sword type, int x, int y, bool hasFullHealth)
     {
         init();
         willShoot = hasFullHealth;
         lookingHorizontal = x;
         lookingVertical = y;
-        targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-       
+        originalPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         string newAnimation = "";
 
         if (x != 0)
@@ -95,25 +123,26 @@ public class SwordScript : MonoBehaviour
             newAnimation = "X";
             bc2d.size = new Vector2(bc2d.size.y, bc2d.size.x);
             bc2d.offset = new Vector2(bc2d.offset.y, bc2d.offset.x);
-
-            targetPosition.x = transform.position.x + (.5f * x);
+            originalPosition.y -= .1f;
         }
         else if (y != 0)
         {
             newAnimation = "Y";
-            targetPosition.y = transform.position.y + (.5f * y);
+            originalPosition.x -= .1f;
         }
 
+        // check for the need to do any flipping of the sword
         if (x < 0)
         {
             transform.localScale = new Vector2(-1, 1);
         }
-
-        if (y < 0)
+        else if (y < 0)
         {
             transform.localScale = new Vector2(1, -1);
+            originalPosition.x += .2f;
         }
 
+        // check for what type of sword was passed in
         switch (type)
         {
             case Sword.WOOD:
@@ -129,14 +158,20 @@ public class SwordScript : MonoBehaviour
                 break;
         }
 
+        // set any of the fine tweeks to the position of the the object
+        transform.position = originalPosition;
+        targetPosition = originalPosition;
+
+        targetPosition.x = transform.position.x + (.9f * x);
+        targetPosition.y = transform.position.y + (.9f * y);
+
         animator.Play(newAnimation);
     }
-
-    public void shoot(int x, int y)
+    public void Shoot(int x, int y)
     {
         init();
         isBeam = true;
-        rb2d.velocity = new Vector2((10 * x), (10 * y));
+        rb2d.velocity = new Vector2((11 * x), (11 * y));
 
         string newAnimation = "";
 
@@ -164,24 +199,16 @@ public class SwordScript : MonoBehaviour
             transform.localScale = new Vector2(1, -1);
         }
 
-        
-
         animator.Play(newAnimation);
     }
-
-    /*private IEnumerator Beam(string direction, byte number)
+    public void Diagonal(short x, short y)
     {
-        animator.Play(direction + "_" + number);
+        init();
+        isDiagonal = true;
+        rb2d.velocity = new Vector2((-11 * x), (11 * y));
+        animator.Play("Diagonal_UP_LEFT");
+        transform.localScale = new Vector2((1 * x), (1 * y));
 
-        if(number == 4)
-        {
-            number = 0;
-        }
-
-        number++;
-
-        yield return new WaitForSeconds(.5f);
-
-        Beam(direction, number);
-    }*/
+        Invoke("DestroyYourself", .17f);
+    }
 }

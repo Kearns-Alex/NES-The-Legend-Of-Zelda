@@ -8,6 +8,7 @@ TagManager:
   - Blowable
   - Burnable
   - Walkable
+  - Weapon
   layers:
   - Default
   - TransparentFX
